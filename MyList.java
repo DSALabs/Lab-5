@@ -1,5 +1,3 @@
-package Lab5;
-
 public interface MyList {
 	// Inserts an element into a specified position in the list. This
 	// method throws an exception if position value is less than 1 or greater than
