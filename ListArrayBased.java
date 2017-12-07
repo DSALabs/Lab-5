@@ -1,6 +1,5 @@
 
 public class ListArrayBased implements MyList {
-
 	private Comparable[] list;
 	private int size = 0;
 
@@ -28,7 +27,7 @@ public class ListArrayBased implements MyList {
 		int j = 0;
 		int k = l;
 		while(i<left && j< right) {
-			if(leftArray[i].compareTo(rightArray[j]) <= 1) {
+			if(leftArray[i].compareTo(rightArray[j]) <= 0) {
 				list[k] = leftArray[i];
 				i++;
 			}
@@ -65,7 +64,7 @@ public class ListArrayBased implements MyList {
 		int lastS1 = first;
 		int firstUnknown = first+1;
 		while(firstUnknown<=last) {
-			if(list[firstUnknown].compareTo(p) <1) {
+			if(list[firstUnknown].compareTo(p) <0) {
 				swap(firstUnknown, lastS1+1);
 				lastS1++;
 				firstUnknown++;
@@ -78,18 +77,19 @@ public class ListArrayBased implements MyList {
 	}
 	
 	public void quickSortIteratively() {
-		partition(0, size);
+		for(int i = 0; i<size-1; i++)
+		partition(i, size-1);
 	}
 	
 	int recPartition(int low, int high)
 	    {
 	        Comparable pivot = list[high]; 
-	        int i = low; // index of smaller element
+	        int i = low-1; // index of smaller element
 	        for (int j=low; j<high; j++)
 	        {
 	            // If current element is smaller than or
 	            // equal to pivot
-	            if (list[j].compareTo(pivot) <= 1)
+	            if (list[j].compareTo(pivot) <= 0)
 	            {
 	                i++;
 	                swap(i, j);
@@ -122,7 +122,7 @@ public class ListArrayBased implements MyList {
 	        {
 	            Comparable key = list[i];
 	            int j = i-1;
-	            while (j>=0 && (list[j].compareTo(key) >1))
+	            while (j>=0 && (list[j].compareTo(key) >0))
 	            {
 	                list[j+1] = list[j];
 	                j = j-1;
@@ -134,9 +134,9 @@ public class ListArrayBased implements MyList {
 
 	public void bubbleSort() {
 		int n = size;
-        for (int i = 0; i < n; i++)
-            for (int j = 0; j < n-i; j++)
-                if (list[j].compareTo(list[j+1]) > 1)
+        for (int i = 0; i < n-1; i++)
+            for (int j = 0; j < n-i-1; j++)
+                if (list[j].compareTo(list[j+1]) > 0)
                 {
                     swap(j, j+1);
                 }
@@ -149,7 +149,7 @@ public class ListArrayBased implements MyList {
 	public Comparable getMax() {
 		Comparable max = list[0];
 		for(int i = 0; i<=size; i++) {
-			if(list[i].compareTo(max)> 1) {
+			if(list[i].compareTo(max)> 0) {
 				max = list[i];
 			}
 		}
@@ -159,9 +159,45 @@ public class ListArrayBased implements MyList {
 	public void radixSort() {
 		
 	}
-
+	void heapify(Comparable arr[], int n, int i)
+    {
+        int largest = i;  // Initialize largest as root
+        int l = 2*i + 1;  // left = 2*i + 1
+        int r = 2*i + 2;  // right = 2*i + 2
+ 
+        // If left child is larger than root
+        if (l < n && arr[l].compareTo(arr[largest]) >0)
+            largest = l;
+ 
+        // If right child is larger than largest so far
+        if (r < n && arr[r].compareTo(arr[largest]) > 0)
+            largest = r;
+ 
+        // If largest is not root
+        if (largest != i)
+        {
+            swap(i, largest);
+ 
+            // Recursively heapify the affected sub-tree
+            heapify(arr, n, largest);
+        }
+    }
 	public void heapSort() {
-		
+		 int n = size;
+		 
+	        // Build heap (rearrange array)
+	        for (int i = n / 2 - 1; i >= 0; i--)
+	            heapify(list, n, i);
+	 
+	        // One by one extract an element from heap
+	        for (int i=n-1; i>=0; i--)
+	        {
+	            // Move current root to end
+	            swap(i, 0);
+	 
+	            // call max heapify on the reduced heap
+	            heapify(list, i, 0);
+	        }
 	}
 
 	public void treeSort() {
@@ -197,8 +233,14 @@ public class ListArrayBased implements MyList {
 
 	// Done
 	public boolean add(Comparable E) {
-		add(size, E);
+		if(size == list.length) {
+			add(size+1, E);
+			return true;
+		}
+		else{list[size] = E;
+		size++;
 		return true;
+	}
 	}
 
 	// Done
@@ -276,7 +318,9 @@ public class ListArrayBased implements MyList {
 		if (index >= 0 && index < size) {
 			Comparable temp = list[index];
 			list[index] = E;
+			size++;
 			return true;
+			
 		} else {
 			return true;
 		}
@@ -284,15 +328,7 @@ public class ListArrayBased implements MyList {
 
 	// Done
 	public int size() {
-		// Done
-		int count = 0;
-		for (Comparable x : list) {
-			if (x != null) {
-				count++;
-			}
-		}
-		return count;
-	}
+		return size;}
 
 	//TODO -- currently working on
 	public MyList subList(int fromIndex, int toIndex) {
@@ -312,11 +348,9 @@ public class ListArrayBased implements MyList {
 
 	// Done
 	public boolean swap(int position1, int position2) {
-		Comparable x = list[position1];
-		Comparable y = list[position2];
 		Comparable temp = list[position1];
-		x = y;
-		y = temp;
+		list[position1] = list[position2];
+		 list[position2] = temp;
 		return true;
 
 	}
@@ -326,5 +360,5 @@ public class ListArrayBased implements MyList {
 		// TODO Auto-generated method stub
 		return false;
 	}
-
 }
+
